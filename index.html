@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRAVA LETRAS</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .menu-container,
+        .theme-container,
+        .game-container {
+            display: none;
+            text-align: center;
+        }
+
+        .menu-container.active,
+        .theme-container.active,
+        .game-container.active {
+            display: block;
+        }
+
+        .letter-button {
+            width: 60px;
+            height: 60px;
+            margin: 5px;
+        }
+
+        .timer-bar {
+            height: 20px;
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+    <div class="container vh-100 d-flex justify-content-center align-items-center">
+        <div class="menu-container active text-center">
+            <h1>Bem-vindo ao Jogo</h1>
+            <button class="btn btn-primary btn-lg mt-2" onclick="startGame()">Jogar</button>
+            <button class="btn btn-secondary btn-lg mt-2" onclick="showHelp()">Ajuda</button>
+        </div>
+        <div class="theme-container text-center">
+            <h2>Selecione um Tema</h2>
+            <button class="btn btn-info mt-2" onclick="selectTheme()">Gerar Tema</button>
+            <!-- Adicione outros temas aqui -->
+            <button class="btn btn-warning mt-2" onclick="backToMenu()">Voltar ao Menu</button>
+        </div>
+        <div class="game-container text-center">
+            <h2 id="game-theme">Tema</h2>
+            <div id="timer" class="progress mt-2">
+                <div id="timer-bar" class="progress-bar bg-danger timer-bar" style="width: 100%;"></div>
+            </div>
+            <div id="letters" class="d-flex flex-wrap justify-content-center mt-4">
+                <!-- Geração dinâmica de botões de letras -->
+            </div>
+            <button class="btn btn-warning mt-4" onclick="backToMenu()">Voltar ao Menu</button>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function startGame() {
+            $('.menu-container').removeClass('active');
+            $('.theme-container').addClass('active');
+        }
+
+        function showHelp() {
+            alert("Regras do jogo:\n1. O jogador mais novo começa...\n2. Você tem 10 segundos para responder...");
+        }
+
+        function selectTheme(theme) {
+            $('#game-theme').text(theme);
+            $('.theme-container').removeClass('active');
+            $('.game-container').addClass('active');
+            initializeGame();
+            const themes = [
+                "Animais",
+                "Objetos",
+                "Alimentos",
+                "Cores",
+                "Nomes de Pessoas",
+                "Países e Capitais",
+                "Profissões",
+                "Partes do Corpo",
+                "Esportes",
+                "Natureza",
+                "Frutas",
+                "Legumes e Verduras",
+                "Instrumentos Musicais",
+                "Meios de Transporte",
+                "Flores",
+                "Cidades Famosas",
+                "Marcas Famosas",
+                "Planetas e Estrelas",
+                "Filmes e Séries",
+                "Livros e Autores",
+                "Heróis e Vilões",
+                "Tecnologia",
+                "Computação e Internet",
+                "História e Personagens Históricos",
+                "Arte e Pintura",
+                "Monumentos e Construções Famosas",
+                "Festas e Celebrações",
+                "Roupas e Acessórios",
+                "Jóias e Pedras Preciosas",
+                "Veículos e Máquinas",
+                "Música e Cantores",
+                "Sentimentos e Emoções",
+                "Filosofia e Conceitos",
+                "Ciência e Experimentos",
+                "Desastres Naturais",
+                "Fenômenos Climáticos",
+                "Hobbies e Passatempos",
+                "Brinquedos e Jogos",
+                "Aves e Peixes",
+                "Insetos e Répteis",
+                "Comidas Típicas",
+                "Doenças e Saúde",
+                "Ferramentas e Equipamentos",
+                "Mitologia e Lendas",
+                "Armas e Equipamentos de Guerra",
+                "Religiões e Crenças",
+                "Educação e Aprendizado",
+                "Geografia e Mapas",
+                "Viagens e Destinos Turísticos",
+                "Valores e Virtudes",
+                "Linguagens e Dialetos",
+                "Figuras de Linguagem",
+                "Estruturas de Dados",
+                "Lugares Assustadores",
+                "Fenômenos Sobrenaturais",
+                "Civilizações Antigas",
+                "Materiais e Minerais",
+                "Produtos de Limpeza",
+                "Doces e Sobremesas",
+                "Animais Marinhos",
+                "Partes de uma Casa",
+                "Números e Operações Matemáticas",
+                "Tarefas Domésticas",
+                "Veículos Espaciais",
+                "Comidas de Festa"
+            ];
+
+            const randomTheme = themes[Math.floor(Math.random() * themes.length)];
+            $('#game-theme').text(randomTheme);
+        }
+
+        function backToMenu() {
+            $('.theme-container, .game-container').removeClass('active');
+            $('.menu-container').addClass('active');
+            resetGame();
+        }
+
+        function initializeGame() {
+            // Inicializa as letras e o cronômetro
+            const letters = 'ABCDEFGHIJLMNOPRSTUV'.split('');
+            $('#letters').empty();
+            letters.forEach(letter => {
+                $('#letters').append(`<button class="btn btn-primary letter-button" onclick="selectLetter(this)">${letter}</button>`);
+            });
+            startTimer();
+        }
+
+        function resetGame() {
+            // Reseta o jogo para o estado inicial
+            $('#timer-bar').css('width', '100%');
+            clearTimeout(timer);
+        }
+
+        let timer;
+        let tickingSound = new Audio('TICTAC.mp3');
+        let alarmSound = new Audio('ALARM.mp3');
+
+        function startTimer() {
+            let width = 100;
+            tickingSound.loop = true;
+            tickingSound.play();
+            timer = setInterval(() => {
+                if (width <= 0) {
+                    clearInterval(timer);
+                    tickingSound.pause();
+                    alarmSound.play();
+                    alert('Tempo esgotado!');
+                } else {
+                    width--;
+                    $('#timer-bar').css('width', width + '%');
+                }
+            }, 100);
+        }
+
+        function checkAllLettersSelected() {
+            const allSelected = $('.letter-button').length === $('.letter-button:disabled').length;
+            if (allSelected) {
+                setTimeout(() => {
+                    alert('Todas as letras foram selecionadas! A nova rodada vai começar.');
+                    resetGame();
+                    initializeGame();
+                }, 500);
+            }
+        }
+
+        function selectLetter(button) {
+            $(button).prop('disabled', true).removeClass('btn-primary').addClass('btn-outline-primary');
+            clearInterval(timer);
+            startTimer();
+            checkAllLettersSelected();
+        }
+    </script>
+</body>
+
+</html>
