@@ -59,13 +59,19 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
+
+        let timer;
+        let tickingSound = new Audio('media/TICTAC.mp3');
+        let alarmSound = new Audio('media/ALARM.mp3');
+
         function startGame() {
             $('.menu-container').removeClass('active');
             $('.theme-container').addClass('active');
         }
 
         function showHelp() {
-            alert("Regras do jogo:\n1. O jogador mais novo começa...\n2. Você tem 10 segundos para responder...");
+            //TODO
+            alert("Regras do jogo:");
         }
 
         function selectTheme(theme) {
@@ -146,6 +152,8 @@
         }
 
         function backToMenu() {
+            tickingSound.pause();
+            alarmSound.pause();
             $('.theme-container, .game-container').removeClass('active');
             $('.menu-container').addClass('active');
             resetGame();
@@ -163,13 +171,11 @@
 
         function resetGame() {
             // Reseta o jogo para o estado inicial
+            tickingSound.pause();
+            alarmSound.pause();
             $('#timer-bar').css('width', '100%');
             clearTimeout(timer);
         }
-
-        let timer;
-        let tickingSound = new Audio('TICTAC.mp3');
-        let alarmSound = new Audio('ALARM.mp3');
 
         function startTimer() {
             let width = 100;
