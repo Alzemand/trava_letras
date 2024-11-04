@@ -186,7 +186,9 @@
                     clearInterval(timer);
                     tickingSound.pause();
                     alarmSound.play();
-                    alert('Tempo esgotado!');
+                    setTimeout(() => {
+                        alert('Tempo esgotado!');
+                    }, 250);
                 } else {
                     width--;
                     $('#timer-bar').css('width', width + '%');
