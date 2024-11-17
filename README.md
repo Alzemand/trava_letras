@@ -1,4 +1,4 @@
-TRAVA LETRAS
+TRAVA LETRA
 ## Regras do Jogo
 
 1. O jogador mais novo começa o jogo, seguido pelo jogador à sua esquerda.
